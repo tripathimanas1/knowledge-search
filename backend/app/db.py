@@ -2,6 +2,8 @@ import sqlite3
 import os
 from pathlib import Path
 
+from backend.app.migrations import run_migrations
+
 # Relative path from project root
 DEFAULT_DB_PATH = Path("data/metrics/app.db")
 
@@ -20,38 +22,9 @@ def get_connection(db_path=None):
     return conn
 
 def init_db(db_path=None):
-    """Idempotently initializes the database schema."""
+    """Idempotently initializes the database schema via migrations."""
     conn = get_connection(db_path)
-    cursor = conn.cursor()
-    
-    # query_logs table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS query_logs (
-            request_id TEXT PRIMARY KEY,
-            query TEXT,
-            latency_ms REAL,
-            result_count INTEGER,
-            alpha REAL,
-            top_k INTEGER,
-            timestamp TEXT,
-            error TEXT
-        )
-    """)
-    
-    # experiments table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS experiments (
-            run_id TEXT PRIMARY KEY,
-            timestamp TEXT,
-            git_commit TEXT,
-            alpha REAL,
-            model_name TEXT,
-            ndcg_10 REAL,
-            recall_10 REAL,
-            mrr_10 REAL
-        )
-    """)
-    
+    run_migrations(conn)
     conn.commit()
     conn.close()
 
