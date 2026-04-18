@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.env
+*.env
+.DS_Store
+data/processed/
+data/index/
+data/metrics/*.db
+!data/metrics/experiments.csv
