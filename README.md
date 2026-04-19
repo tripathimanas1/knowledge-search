@@ -215,5 +215,5 @@ per assignment Section 5). Full justification in `docs/decision_log.md` DL-006.
 ## Docs
 
 - `docs/decision_log.md` — rationale for all key design choices
-- `docs/codex_log.md` — every AI coding assistant prompt mapped to commits
+- `docs/ai_logs.md` — every AI coding assistant prompt mapped to commits
 - `docs/break_fix_log.md` — induced failures, observed symptoms, and fixes

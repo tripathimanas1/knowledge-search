@@ -1,4 +1,4 @@
-# Codex Prompt Log
+# Antigravity Prompt Log
 
 Chronological log of every prompt sent to the AI coding assistant,
 what was used from the output, and what was changed manually.
@@ -23,7 +23,7 @@ Each entry maps to a git commit.
 - Changed subprocess call to use `check=False` to avoid exception on non-git directories.
 - Added `.strip()` to git hash output to remove trailing newline.
 
-**Commit**: [FILL IN HASH]
+**Commit**: b305644
 
 ---
 
@@ -43,7 +43,7 @@ Each entry maps to a git commit.
 - Bumped faiss-cpu to verified CPU-only version after testing install.
 - Added scikit-learn (needed for 20newsgroups dataset).
 
-**Commit**: [FILL IN HASH]
+**Commit**: e3b693d
 
 ---
 
@@ -62,10 +62,10 @@ Each entry maps to a git commit.
 
 **Manual edits**:
 - Added `|| exit 1` after ingest and index commands so script fails loudly on error.
-- Changed PID storage to use local variables instead of files (simpler for single-session use).
+- Changed PID storage to use local variables instead of files.
 - Fixed venv activation path compatibility between Linux and macOS.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 6c29e35
 
 ---
 
@@ -87,7 +87,7 @@ Each entry maps to a git commit.
 - Wrapped log_query() body in try/except Exception (output only caught sqlite3.Error — too narrow).
 - Added `conn.row_factory = sqlite3.Row` to get_connection() for dict-like row access.
 
-**Commit**: [FILL IN HASH]
+**Commit**: a97c05f
 
 ---
 
@@ -107,10 +107,10 @@ Each entry maps to a git commit.
 **Used from output**: Normalization logic and CLI argparse structure.
 
 **Manual edits**:
-- Title extraction used split('\n')[0] — changed to find first non-empty line (some docs start with blank lines).
-- Added .encode('utf-8', errors='replace').decode('utf-8') to handle encoding issues in some newsgroup docs.
+- Title extraction changed to find first non-empty line (some docs start with blank lines).
+- Added .encode('utf-8', errors='replace').decode('utf-8') to handle encoding issues.
 
-**Commit**: [FILL IN HASH]
+**Commit**: e2dd1b4
 
 ---
 
@@ -129,9 +129,9 @@ Each entry maps to a git commit.
 
 **Manual edits**:
 - Added explicit `encoding='utf-8'` to open() calls for JSON files.
-- query() was returning np.float64 scores — added `float(s)` cast to match API contract.
+- query() was returning np.float64 scores — added `float(s)` cast.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 7f91bfa
 
 ---
 
@@ -152,9 +152,9 @@ Each entry maps to a git commit.
 **Manual edits**:
 - Added `device='cpu'` explicitly to SentenceTransformer() constructor.
 - FAISS search returns float32 — added `.item()` conversion on scores.
-- Fixed test mock: random vectors weren't L2-normalized so argmax didn't match expected. Constructed deterministic vectors instead.
+- Fixed test mock: constructed deterministic vectors for correct argmax behavior.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 0a8feba
 
 ---
 
@@ -171,10 +171,10 @@ Each entry maps to a git commit.
 **Used from output**: Full script.
 
 **Manual edits**:
-- md5 was computed on file path string instead of file bytes — fixed to read binary and hash actual content.
+- md5 was computed on file path string — fixed to read binary and hash actual content.
 - Added timing around each index build separately.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 1a81eea
 
 ---
 
@@ -193,10 +193,10 @@ Each entry maps to a git commit.
 **Used from output**: Core logic and most tests.
 
 **Manual edits**:
-- Union logic used set operations that lost score mapping — rewrote to build explicit dicts keyed by doc_id before merging.
+- Union logic rewrote using explicit dicts keyed by doc_id (set operations lost score mapping).
 - text_snippet left as character slice (acceptable for this use case).
 
-**Commit**: [FILL IN HASH]
+**Commit**: f112eb0
 
 ---
 
@@ -215,11 +215,11 @@ Each entry maps to a git commit.
 
 **Manual edits**: None — output was clean.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 82f57d6
 
 ---
 
-## Entry 011 — FastAPI routes
+## Entry 011 — FastAPI routes (initial)
 
 **Task**: Task 11
 
@@ -234,11 +234,11 @@ Each entry maps to a git commit.
 **Used from output**: Route structure, Pydantic model, lifespan pattern.
 
 **Manual edits**:
-- docs_lookup loading was inside the route handler — moved to lifespan so it loads once at startup.
-- /metrics was returning JSON — added `media_type="text/plain"` to Response.
-- Test fixtures needed app.state mocking — rewrote test setup to use dependency override instead.
+- docs_lookup loading moved to lifespan so it loads once at startup.
+- /metrics returned JSON — added `media_type="text/plain"` to Response.
+- Test fixtures rewrote setup to use dependency override.
 
-**Commit**: [FILL IN HASH]
+**Commit**: af6bf82
 
 ---
 
@@ -256,11 +256,11 @@ Each entry maps to a git commit.
 **Used from output**: Page structure and chart code.
 
 **Manual edits**:
-- KPI page was crashing on empty DB — added `if df.empty: st.info()` guards on all chart calls.
-- Line chart x-axis used timestamp strings — changed to integer run index for cleaner eval trend.
-- Score cards displayed raw floats — added `round(..., 4)` for display.
+- KPI page crashed on empty DB — added `if df.empty: st.info()` guards.
+- Line chart x-axis changed to integer run index for cleaner eval trend.
+- Score cards got `round(..., 4)` for display.
 
-**Commit**: [FILL IN HASH]
+**Commit**: fa5b99f
 
 ---
 
@@ -277,7 +277,7 @@ Each entry maps to a git commit.
 
 **Manual edits**: None.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 113314c
 
 ---
 
@@ -293,9 +293,9 @@ Each entry maps to a git commit.
 **Used from output**: Full implementation and tests.
 
 **Manual edits**:
-- IDCG calculation was not capping at k — fixed to min(len(relevant), k) for correct ideal ranking.
+- IDCG calculation fixed to min(len(relevant), k) for correct ideal ranking.
 
-**Commit**: [FILL IN HASH]
+**Commit**: fa33d89
 
 ---
 
@@ -312,10 +312,10 @@ Each entry maps to a git commit.
 **Used from output**: Full script structure.
 
 **Manual edits**:
-- CSV append was opening with 'w' mode — changed to 'a' with header check (write header only if file doesn't exist).
-- Extracted git commit subprocess call to shared backend/app/utils.py to avoid duplication.
+- CSV append changed from 'w' to 'a' mode with header check.
+- Extracted git commit subprocess call to shared backend/app/utils.py.
 
-**Commit**: [FILL IN HASH]
+**Commit**: e9969f7
 
 ---
 
@@ -334,7 +334,7 @@ Each entry maps to a git commit.
 
 **Manual edits**: None.
 
-**Commit**: [FILL IN HASH]
+**Commit**: bc5e544
 
 ---
 
@@ -352,59 +352,32 @@ Each entry maps to a git commit.
 **Used from output**: Migration logic and tests.
 
 **Manual edits**:
-- Scenario B migration test needed v1 schema explicitly created before running migrations — output assumed empty DB at v0.
+- Scenario B migration test needed v1 schema explicitly created before running migrations.
 
-**Commit**: [FILL IN HASH]
-
----
-
-## Entry 018 — Scenario C test + z-score normalization
-
-**Tasks**: Task 18 + Gap 2 fix
-
-**Prompt (Task 18)**:
-> In tests/test_scenario_c.py write tests for flat score divide-by-zero
-> case. Assert no NaN in output. Append Scenario C entry to
-> docs/break_fix_log.md.
-
-**Prompt (Gap 2)**:
-> In backend/app/search.py add z_score_normalize() with eps guard and
-> [-3,3] clipping. Update hybrid_search() to accept norm_strategy param
-> ("minmax" or "zscore"). Update POST /search in routes.py to expose
-> norm_strategy field. Add tests for z-score normalization.
-
-**Used from output**: Both full implementations.
-
-**Manual edits**:
-- Scenario C hybrid_search mock needed equal scores for ALL docs, not just BM25 — updated fixture.
-- z-score clipping used np.clip — replaced with pure Python min/max to avoid numpy type leakage.
-
-**Commit**: [FILL IN HASH]
+**Commit**: b1afec3
 
 ---
 
-## Entry 019 — Folder ingestion mode
+## Entry 018 — Scenario C test
 
-**Task**: Gap 3 fix
+**Task**: Task 18
 
 **Prompt**:
-> In backend/app/ingest.py extend to support --source folder mode that
-> reads .txt and .md files recursively from --input dir. Skip files
-> under 50 chars or over 50KB. Default --source to "newsgroups" so
-> existing up.sh behaviour is unchanged. Tests: 3 tmp .txt files,
-> assert correct JSONL output, assert small files skipped, assert
-> non-txt/md files ignored.
+> In tests/test_scenario_c.py write tests for flat score divide-by-zero
+> case. Assert no NaN in output. Assert all values == 0.5 for flat input.
+> Test hybrid_search with equal BM25 scores mock. Append Scenario C entry
+> to docs/break_fix_log.md.
 
-**Used from output**: Full folder mode implementation and tests.
+**Used from output**: Full test.
 
 **Manual edits**:
-- Pathlib relative path for `source` field was absolute on Windows — added `.as_posix()` and made relative to repo root explicitly.
+- hybrid_search mock updated to return equal scores for ALL docs, not just BM25.
 
-**Commit**: [FILL IN HASH]
+**Commit**: 7d3021e
 
 ---
 
-## Entry 020 — README
+## Entry 019 — README
 
 **Task**: Task 19
 
@@ -416,8 +389,90 @@ Each entry maps to a git commit.
 **Used from output**: Full README draft.
 
 **Manual edits**:
-- ASCII diagram had wrong arrow directions — fixed data flow.
-- Quickstart had redundant pip install step — removed (up.sh handles it).
-- Added actual eval command with correct module path.
+- Fixed ASCII diagram arrow directions.
+- Removed redundant pip install step from quickstart.
+- Added correct eval command with module path.
 
-**Commit**: [FILL IN HASH]
+**Commit**: db4c000
+
+---
+
+## Entry 020 — Z-score normalization (Gap fix)
+
+**Task**: Gap 2 — second normalization strategy
+
+**Prompt**:
+> In backend/app/search.py add z_score_normalize() with eps guard and
+> [-3,3] clipping. Update hybrid_search() to accept norm_strategy param
+> ("minmax" or "zscore"). Update POST /search in routes.py to expose
+> norm_strategy field. Add tests for z-score normalization edge cases.
+
+**Used from output**: Full implementation.
+
+**Manual edits**:
+- z-score clipping replaced np.clip with pure Python min/max to avoid numpy type leakage.
+
+**Commit**: 09e7820
+
+---
+
+## Entry 021 — Folder ingestion + preprocessing tests (Gap fix)
+
+**Task**: Gap 3 — .txt/.md folder ingestion + preprocessing unit tests
+
+**Prompt (folder ingestion)**:
+> In backend/app/ingest.py extend to support --source folder mode that
+> reads .txt and .md files recursively from --input dir. Skip files
+> under 50 chars or over 50KB. Default --source to "newsgroups".
+> Tests: 3 tmp .txt files, assert correct JSONL output, small files
+> skipped, non-txt/md files ignored.
+
+**Prompt (preprocessing tests)**:
+> In backend/tests/test_ingest.py add: test_whitespace_cleanup,
+> test_long_doc_truncation (assert len <= 2000), test_short_doc_skipped
+> (< 50 chars excluded), test_title_truncation (assert len <= 80).
+
+**Used from output**: Both full implementations.
+
+**Manual edits**:
+- Pathlib relative path for source field was absolute on Windows — added .as_posix() relative to repo root.
+
+**Commit**: cfb2167
+
+---
+
+## Entry 022 — Rate limiting + architecture.md (Gap fix)
+
+**Task**: Gap — rate limiting + docs/architecture.md
+
+**Prompt (rate limiting)**:
+> In backend/app/api/routes.py add in-memory RateLimiter class using
+> collections.deque. 30 requests per 60 seconds per client IP.
+> Return 429 on limit exceeded. Only applies to POST /search.
+> Test: 31 requests from same IP, assert 31st returns 429.
+
+**Prompt (architecture.md)**:
+> Write docs/architecture.md covering: component diagram, data flow
+> (ingestion, indexing, search request lifecycle), SQLite schema,
+> hybrid scoring formula, directory structure, links to decision_log.
+
+**Used from output**: Both full implementations.
+
+**Manual edits**:
+- Rate limiter IP extraction added fallback to "unknown" for test environments where client is None.
+- Architecture diagram adjusted arrow directions for accuracy.
+
+**Commit**: b687c3f
+
+---
+
+## Entry 023 — Experiments CSV
+
+**Task**: Task 20 — run 5 alpha experiments
+
+**Action**: Manually ran 5 eval commands with alpha 0.0, 0.25, 0.5, 0.75, 1.0.
+Each appended one row to data/metrics/experiments.csv.
+No AI assistant prompt used — this was direct CLI execution of the eval harness
+built in Entry 015.
+
+**Commit**: 2346bfc

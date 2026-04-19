@@ -204,7 +204,7 @@ knowledge-search/
 │       └── experiments.csv     # Eval run history
 ├── docs/
 │   ├── architecture.md         # This file
-│   ├── codex_log.md            # AI assistant prompt log
+│   ├── ai_logs.md            # AI assistant prompt log
 │   ├── decision_log.md         # Design decision rationale
 │   └── break_fix_log.md        # Induced failure scenarios
 ├── up.sh                       # One-command setup + run
