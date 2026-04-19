@@ -66,10 +66,67 @@ def run_ingest(output_dir: str):
             
     print(f"Ingested {len(docs)} documents to {out_path}")
 
+def run_folder_ingest(input_dir: str, output_dir: str):
+    """Read .txt and .md files from input_dir and save as JSONL."""
+    in_dir = Path(input_dir)
+    out_dir = Path(output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / "docs.jsonl"
+    repo_root = Path.cwd()
+    
+    docs = []
+    processed_count = 0
+    
+    if in_dir.exists():
+        for file_path in in_dir.rglob("*"):
+            if file_path.is_file() and file_path.suffix.lower() in [".txt", ".md"]:
+                # skip if larger than 50KB
+                if file_path.stat().st_size > 50 * 1024:
+                    continue
+                
+                try:
+                    raw_text = file_path.read_text(encoding="utf-8")
+                except UnicodeDecodeError:
+                    continue
+                
+                cleaned = clean_text(raw_text)
+                if len(cleaned) < 50:
+                    continue
+                
+                title = file_path.stem[:80]
+                
+                try:
+                    source = str(file_path.relative_to(repo_root))
+                except ValueError:
+                    source = str(file_path)
+                    
+                # Use st_mtime for file modification time
+                created_at = datetime.fromtimestamp(file_path.stat().st_mtime, tz=timezone.utc).isoformat()
+                
+                doc = {
+                    "doc_id": f"doc_{processed_count:04d}",
+                    "title": title,
+                    "text": cleaned,
+                    "source": source,
+                    "created_at": created_at
+                }
+                docs.append(doc)
+                processed_count += 1
+
+    with open(out_path, 'w', encoding='utf-8') as f:
+        for doc in docs:
+            f.write(json.dumps(doc) + '\n')
+            
+    print(f"Ingested {len(docs)} folder documents to {out_path}")
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Ingest 20 Newsgroups corpus.")
-    parser.add_argument("--input", default="data/raw", help="Input directory (unused for this downloader)")
+    parser = argparse.ArgumentParser(description="Ingest 20 Newsgroups or folder corpus.")
+    parser.add_argument("--input", default="data/raw", help="Input directory")
     parser.add_argument("--out", default="data/processed", help="Output directory for processed documents")
+    parser.add_argument("--source", default="newsgroups", choices=["newsgroups", "folder"], help="Source mode")
     args = parser.parse_args()
     
-    run_ingest(args.out)
+    if args.source == "newsgroups":
+        run_ingest(args.out)
+    elif args.source == "folder":
+        run_folder_ingest(args.input, args.out)
