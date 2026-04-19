@@ -8,18 +8,18 @@ echo "--- Knowledge Search + KPI Dashboard Setup ---"
 # 1. Create .venv if missing
 if [ ! -d ".venv" ]; then
     echo "[1/4] Creating virtual environment..."
-    python3 -m venv .venv
+    python -m venv .venv
 else
     echo "[1/4] Virtual environment exists."
 fi
 
 # 2. Activate .venv
-source .venv/bin/activate
+source .venv/Scripts/activate
 
 # 3. Install from requirements.txt
 echo "[2/4] Installing requirements..."
-pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 
 # 4. Check if metadata exists, otherwise ingest and index
 if [ ! -f "data/index/metadata.json" ]; then
@@ -42,7 +42,8 @@ set +e
 
 # 5. Start uvicorn backend
 echo "[4/4] Starting backend..."
-python backend/main.py &
+export PYTHONPATH=$PYTHONPATH:.
+python -m backend.main &
 BACKEND_PID=$!
 
 # 6. Start streamlit frontend

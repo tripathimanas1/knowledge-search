@@ -1,3 +1,5 @@
+import math
+
 def min_max_normalize(scores: list[float], eps: float = 1e-9) -> list[float]:
     """Normalizes a list of scores to the range [0, 1]."""
     if not scores:
@@ -16,13 +18,29 @@ def min_max_normalize(scores: list[float], eps: float = 1e-9) -> list[float]:
         
     return [(s - s_min) / diff for s in scores]
 
+def z_score_normalize(scores: list[float], eps: float = 1e-9) -> list[float]:
+    """Normalizes a list of scores using Z-score and clips to [-3, 3]."""
+    if not scores:
+        return []
+    
+    n = len(scores)
+    mean = sum(scores) / n
+    std = math.sqrt(sum((x - mean) ** 2 for x in scores) / n)
+    
+    if std < eps:
+        return [0.0] * n
+        
+    normalized = [(s - mean) / (std + eps) for s in scores]
+    return [max(-3.0, min(3.0, s)) for s in normalized]
+
 def hybrid_search(
     query: str,
     top_k: int,
     alpha: float,
     bm25_index,
     vector_index,
-    docs_lookup: dict[str, dict]
+    docs_lookup: dict[str, dict],
+    norm_strategy: str = "minmax"
 ) -> list[dict]:
     """Combines BM25 and Vector search results using min-max normalization."""
     
@@ -49,8 +67,12 @@ def hybrid_search(
     raw_vector = [vector_map.get(doc_id, 0.0) for doc_id in union_ids]
     
     # Normalize scores
-    norm_bm25 = min_max_normalize(raw_bm25)
-    norm_vector = min_max_normalize(raw_vector)
+    if norm_strategy == "zscore":
+        norm_bm25 = z_score_normalize(raw_bm25)
+        norm_vector = z_score_normalize(raw_vector)
+    else:
+        norm_bm25 = min_max_normalize(raw_bm25)
+        norm_vector = min_max_normalize(raw_vector)
     
     scored_results = []
     for i, doc_id in enumerate(union_ids):

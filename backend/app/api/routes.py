@@ -14,6 +14,7 @@ class SearchRequest(BaseModel):
     top_k: int = Field(10, ge=1, le=50)
     alpha: float = Field(0.5, ge=0.0, le=1.0)
     filters: dict = Field(default_factory=dict)
+    norm_strategy: str = "minmax"
 
 def get_git_commit():
     try:
@@ -48,7 +49,8 @@ async def search(request: Request, body: SearchRequest):
             alpha=body.alpha,
             bm25_index=request.app.state.bm25_index,
             vector_index=request.app.state.vector_index,
-            docs_lookup=request.app.state.docs_lookup
+            docs_lookup=request.app.state.docs_lookup,
+            norm_strategy=body.norm_strategy
         )
         
         latency_ms = (time.time() - start_time) * 1000
