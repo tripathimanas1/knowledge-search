@@ -31,9 +31,9 @@ def test_skip_short_docs():
 def test_jsonl_output_validity():
     """Verify that normalize_doc outputs are valid JSON-serializable dictionaries."""
     raw_texts = [
-        "First document content that is long enough.",
-        "Second document content that is also long enough.",
-        "Third document content for the test case."
+        "First document content that is long enough to bypass the fifty character threshold filter limit.",
+        "Second document content that is also long enough to bypass the fifty character threshold filter limit.",
+        "Third document content for the test case that is definitely long enough to bypass the fifty character limit."
     ]
     
     for i, text in enumerate(raw_texts):
@@ -85,3 +85,29 @@ def test_folder_mode_ingest(tmp_path):
     assert "large" not in titles
     assert "ignore1" not in titles
     assert "ignore2" not in titles
+
+def test_whitespace_cleanup():
+    text = "hello   \n\n\n   world   \t   foo" + " padding to bypass the fifty character minimum threshold filter"
+    doc = normalize_doc(1, text)
+    assert doc is not None
+    assert "  " not in doc["text"]
+    assert "\n" not in doc["text"]
+    assert doc["text"] == doc["text"].strip()
+    assert doc["text"].startswith("hello world foo")
+
+def test_long_doc_truncation():
+    text = "a " * 1200
+    doc = normalize_doc(1, text)
+    assert doc is not None
+    assert len(doc["text"]) <= 2000
+
+def test_short_doc_skipped():
+    text = "a" * 30
+    doc = normalize_doc(1, text)
+    assert doc is None
+
+def test_title_truncation():
+    text = "T" * 200 + "\nAnd then some content that has enough length to easily bypass the fifty character filter threshold."
+    doc = normalize_doc(1, text)
+    assert doc is not None
+    assert len(doc["title"]) <= 80

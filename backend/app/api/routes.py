@@ -2,6 +2,7 @@ import time
 import uuid
 import subprocess
 from datetime import datetime, timezone
+from collections import deque
 from fastapi import APIRouter, Request, HTTPException, Response
 from pydantic import BaseModel, Field
 from backend.app.search import hybrid_search
@@ -15,6 +16,29 @@ class SearchRequest(BaseModel):
     alpha: float = Field(0.5, ge=0.0, le=1.0)
     filters: dict = Field(default_factory=dict)
     norm_strategy: str = "minmax"
+
+class RateLimiter:
+    def __init__(self):
+        self.clients = {}
+        self.max_requests = 30
+        self.window_seconds = 60
+
+    def is_allowed(self, client_ip: str) -> bool:
+        now = time.time()
+        if client_ip not in self.clients:
+            self.clients[client_ip] = deque()
+            
+        q = self.clients[client_ip]
+        while q and now - q[0] > self.window_seconds:
+            q.popleft()
+            
+        if len(q) >= self.max_requests:
+            return False
+            
+        q.append(now)
+        return True
+
+rate_limiter = RateLimiter()
 
 def get_git_commit():
     try:
@@ -39,6 +63,10 @@ async def health():
 
 @router.post("/search")
 async def search(request: Request, body: SearchRequest):
+    client_ip = request.client.host if request.client else "unknown"
+    if not rate_limiter.is_allowed(client_ip):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded: 30 requests per 60 seconds")
+
     start_time = time.time()
     req_id = str(uuid.uuid4())
     
