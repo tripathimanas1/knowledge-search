@@ -46,7 +46,7 @@ debug logs. All query logs and experiment metrics are persisted in SQLite.
 **Prerequisites**: Python 3.11+, bash (Linux/macOS) or Git Bash (Windows)
 
 ```bash
-git clone https://github.com/YOURUSERNAME/knowledge-search.git
+git clone https://github.com/tripathimanas1/knowledge-search.git
 cd knowledge-search
 ./up.sh
 ```
